@@ -68,7 +68,6 @@ static void	handler(int seg)
 {
 	(void)seg;
 	g_nbr = 1;
-	return ;
 }
 
 int	main(int ac, char *av[])

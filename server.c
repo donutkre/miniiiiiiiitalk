@@ -38,9 +38,9 @@ void	recept(int signum, siginfo_t *info, void *ptr)
 	static int	power;
 
 	(void)ptr;
-	if (kill(info->si_pid, signum) != 0)
-		return ;
 	if (!info->si_pid)
+		return ;
+	if (kill(info->si_pid, signum) != 0)
 		return ;
 	if (signum == SIGUSR1)
 		ascii |= (1 << power);
@@ -54,9 +54,10 @@ void	recept(int signum, siginfo_t *info, void *ptr)
 		ascii = 0;
 	}
 }
-void		mt_bzero(void *p, int n)
+
+void	mt_bzero(void *p, int n)
 {
-	char		*c;
+	char	*c;
 
 	c = (char *)p;
 	while (n--)
@@ -77,12 +78,12 @@ int	main(void)
 	mt_bzero(&act, sizeof(sigaction));
 	act.sa_sigaction = &recept;
 	act.sa_flags = SA_SIGINFO;
-	act.sa_mask = hold;
 	sigaddset(&hold, SIGUSR1);
 	sigaddset(&hold, SIGUSR2);
+	act.sa_mask = hold;
 	if (sigaction(SIGUSR1, &act, NULL) || sigaction(SIGUSR2, &act, NULL))
 	{
-		mt_putstr("\033[0;31msigaction failed, please retry\n");
+		mt_putstr("\033[0;31mPlease retry\n");
 	}
 	while (42)
 		pause();
