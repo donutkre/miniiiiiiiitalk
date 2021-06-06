@@ -76,7 +76,7 @@ int	main(int ac, char *av[])
 
 	if (ac != 3)
 	{
-		write(1, "Input: ./client [pid_id] [message]\n", 36);
+		write(1, "\033[0;33mInput: ./client [pid_id] [message]\n", 50);
 		return (1);
 	}
 	signal(SIGUSR1, handler);
