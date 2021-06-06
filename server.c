@@ -54,23 +54,33 @@ void	recept(int signum, siginfo_t *info, void *ptr)
 		ascii = 0;
 	}
 }
+void		mt_bzero(void *p, int n)
+{
+	char		*c;
+
+	c = (char *)p;
+	while (n--)
+		*c++ = 0;
+}
 
 int	main(void)
 {
 	pid_t				serv_pid;
-	struct sigaction	sa;
+	struct sigaction	act;
 	sigset_t			hold;
 
 	serv_pid = getpid();
 	mt_putstr("\033[1;35mWelcome to Minitalk\nserver pid: ");
 	mt_putnbr_fd((int)serv_pid);
 	mt_putstr("\n");
-	sa.sa_sigaction = &recept;
-	sa.sa_flags = SA_SIGINFO;
-	sa.sa_mask = hold;
+	sigemptyset(&hold);
+	mt_bzero(&act, sizeof(sigaction));
+	act.sa_sigaction = &recept;
+	act.sa_flags = SA_SIGINFO;
+	act.sa_mask = hold;
 	sigaddset(&hold, SIGUSR1);
 	sigaddset(&hold, SIGUSR2);
-	if (sigaction(SIGUSR1, &sa, NULL) || sigaction(SIGUSR2, &sa, NULL))
+	if (sigaction(SIGUSR1, &act, NULL) || sigaction(SIGUSR2, &act, NULL))
 	{
 		mt_putstr("\033[0;31msigaction failed, please retry\n");
 	}
