@@ -1,5 +1,5 @@
 SERVER=server
-CLIENT=client
+CLIENT=client 
 
 all: server client
 

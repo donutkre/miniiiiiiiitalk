@@ -38,9 +38,9 @@ void	recept(int signum, siginfo_t *info, void *ptr)
 	static int	power;
 
 	(void)ptr;
-	if (!info->si_pid)
+	if (!info->si_pid) 
 		return ;
-	if (kill(info->si_pid, signum) != 0)
+	if (kill(info->si_pid, signum) != 0) //gen signal to pid
 		return ;
 	if (signum == SIGUSR1)
 		ascii |= (1 << power);
@@ -74,11 +74,11 @@ int	main(void)
 	mt_putstr("\033[1;35mWelcome to Minitalk\nserver pid: ");
 	mt_putnbr_fd((int)serv_pid);
 	mt_putstr("\n");
-	sigemptyset(&hold);
+	sigemptyset(&hold); //ini signal mask to ex all sig
 	mt_bzero(&act, sizeof(sigaction));
 	act.sa_sigaction = &recept;
 	act.sa_flags = SA_SIGINFO;
-	sigaddset(&hold, SIGUSR1);
+	sigaddset(&hold, SIGUSR1); //add signal  1 to the mask
 	sigaddset(&hold, SIGUSR2);
 	act.sa_mask = hold;
 	if (sigaction(SIGUSR1, &act, NULL) || sigaction(SIGUSR2, &act, NULL))
