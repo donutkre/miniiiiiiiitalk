@@ -35,6 +35,15 @@ static pid_t	mt_num(char *str)
 	return (i);
 }
 
+/* uint8_t is a 8bits integer = 1 byte
+** left bitshifting through 128 decimal, representing all
+** unicode chars 
+**
+** right bitshifting back, basically count/2^n where n
+** takes 1, 2, 3 and so on...
+** 1 char is 1 byte
+*/
+
 static int	send_signal(pid_t pid, char sig)
 {
 	int	bit;
@@ -56,13 +65,16 @@ static int	send_signal(pid_t pid, char sig)
 				i = 0;
 				break ;
 			}
-			usleep(1);
+			usleep(1); //delay after each signal so that the server can correctly process the signals
 		}
 		if (bit == 8)
 			return (1);
 	}
 	return (0);
 }
+
+/* handler takes the pid and the message from send_signal, and sends characters to that pid 
+** signal confirmation received by the client */
 
 static void	handler(int seg)
 {
@@ -80,11 +92,11 @@ int	main(int ac, char *av[])
 		return (1);
 	}
 	signal(SIGUSR1, handler);
-	signal(SIGUSR2, handler);
+	signal(SIGUSR2, handler); // signal 2 should come
 	client_pid = mt_num(av[1]);
 	while (1)
 	{
-		if (!send_signal(client_pid, *av[2]))
+		if (!send_signal(client_pid, *av[2]))  // transform the string and send to the server
 		{
 			send_signal(client_pid, '\0');
 			write(1, "\033[0;31mYour message has failed to deliver\n", 46);
